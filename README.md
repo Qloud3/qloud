@@ -30,7 +30,7 @@
   <p align="center">
     Web Application to manage physical and virtual sales
     <br />
-    <a href="https://github.com/Qloud3/Qloud"><strong>Explorar los archivos »</strong></a>
+    <a href="https://github.com/Qloud3/Qloud"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <!-- Estas linea la descomentamos apenas tengamos el producto en productivo o algun servidor -->
