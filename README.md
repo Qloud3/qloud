@@ -142,7 +142,7 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
     </li>
     <li>Juan David Naranjo
         <p>
-            Presentación
+            Estudiante de ingenieria de sistemas y computacion de la universidad del quindio, actualmente en septimo semestre, estudiante de Mision TIC en la universidad de Antioquia.
         </p>
     </li>
     <li>Oscar Rojas
