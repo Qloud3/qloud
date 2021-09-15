@@ -147,7 +147,7 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
     </li>
     <li>Oscar Rojas
         <p>
-            Presentación 
+            Diseñador web con casi tres años de experiencia, nacido en la ciudad de Armenia, Quindío; fotógrafo y participante en la MisionTIC 2022 en la Universidad de Antioquia. 
         </p>
     </li>
     <li>Santiago Carmona
