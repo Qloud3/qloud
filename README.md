@@ -152,7 +152,7 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
     </li>
     <li>Santiago Carmona
         <p>
-            Presentación
+            Ingeniero civil de la UNAL, oriundo de Villavicencio. Apasionado por la programación y la lógica, integrante del programa MINTIC2022 en la Universidad de Antioquia. 
         </p>
     </li>
 </ul>
