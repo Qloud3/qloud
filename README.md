@@ -22,7 +22,7 @@
 <p align="center">
   <a href="https://github.com/Qloud3/Qloud">
   <!-- Aca debemos colocar nuestro logo una vez empecemos con el diseño del producto -->
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/qloud-logo.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Project Qloud</h3>
@@ -155,6 +155,18 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
             Presentación
         </p>
     </li>
+</ul>
+
+<!-- COLORS -->
+
+## Colors
+
+La siguiente será la paleta de colores que se utilizará en el website:
+<ul>
+  <li>Primario: #7c8fd7 </li>
+  <li>Info: #9dd0ec</li>
+  <li>Dark: #4d4d4d</li>
+  <li>Light: #efefef</li>
 </ul>
 
 <!-- LICENSE -->
