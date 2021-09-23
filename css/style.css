@@ -1,0 +1,13 @@
+.wrapper{
+        background: rgb(157,208,236);
+        background: linear-gradient(165deg, rgba(157,208,236,0.2497199563419118) 0%, rgba(124,143,215,0.2497199563419118) 100%); 
+}
+.wrapper form input{
+        border-radius: 10px 10px 0px 0px;
+        border: 0px;
+        border-bottom: 3px solid #7c8fd7;
+}
+.footer{
+        width: 100vw;
+        min-height: 10px;
+}
