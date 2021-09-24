@@ -63,6 +63,7 @@
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li> -->
     <li><a href="#contributing">Creators</a></li>
+    <li><a href="#colors">Colors</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <!-- Al final descomentamos esta linea para los agradecimientos o sources que hayamos usado para el proyecto -->
