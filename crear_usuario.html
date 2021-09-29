@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Qloud - Ventas</title>
+    <title>Qloud - Crear Usuario</title>
 
     <!-- Bootstrap -->
     <link href="css/vendors/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -35,7 +35,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#ventas"
+                <a class="nav-link" aria-current="page" href="#ventas"
                   >Ventas</a
                 >
               </li>
@@ -43,7 +43,7 @@
                 <a class="nav-link" href="#">Productos</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Usuarios</a>
+                <a class="nav-link active" href="#">Usuarios</a>
               </li>
             </ul>
 
@@ -71,60 +71,41 @@
         </div>
       </nav>
     </header>
-
-    <div
-        class="
-          container
-          d-flex
-          flex-column
-          justify-content-center
-          align-items-center
-        "
-      >
-        <img src="images/qloud-logo.svg" alt="logo" width="180px" />
-        <div
-          class="form-login col-md-4 col-sm-10 my-4 py-2 px-4 bg-light rounded"
-        >
-          <form id="login-form" class="form py-4" action="" method="post">
-            <div class="form-group">
-              <label for="username" class="text-info"
-                >Usuario o correo electrónico:</label
-              ><br />
-              <input
-                type="text"
-                name="username"
-                id="username"
-                class="form-control"
-              />
-            </div>
-            <div class="form-group">
-              <label for="password" class="text-info">Contraseña:</label><br />
-              <input
-                type="password"
-                name="password"
-                id="password"
-                class="form-control"
-              />
-            </div>
-            <div class="form-group d-flex justify-content-end">
-              <p>Olvidé mi <a href="#">contraseña</a></p>
-            </div>
-            <div id="register-link" class="text-center">
-              <input
-                type="submit"
-                name="submit"
-                class="btn btn-primary btn-md col-12"
-                value="Iniciar sesión"
-              />
-              <a href="#" class="text-white btn btn-info col-12 my-2"
-                >Crear cuenta</a
-              >
-              <a href="#" class="small mt-5">Términos y Condiciones</a>
-            </div>
-          </form>
+    <div class="mt-5">
+    <form class="container d-flex flex-column justify-content-center align-items-center">
+        <div class="form-group col-md-6">
+          <label for="inputEmail4">Email</label>
+          <input type="email" class="form-control" id="inputEmail4" placeholder="email@example.com">
         </div>
+        <div class="form-group col-md-6">
+          <label for="inputPassword4">Password</label>
+          <input type="password" class="form-control" id="inputPassword4">
+        </div>
+      <div class="form-group col-md-6">
+        <label for="inputAddress">Repeat Password</label>
+        <input type="password" class="form-control" id="inputAddress" placeholder="">
       </div>
-
+      <div class="form-group col-md-6">
+        <label for="inputAddress2">Username</label>
+        <input type="text" class="form-control" id="inputAddress2" placeholder="Username">
+      </div>
+        <div class="form-group col-md-6">
+          <label for="inputCity">City</label>
+          <input type="text" class="form-control" id="inputCity" placeholder="City">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputState">Rol</label>
+          <select id="inputState" class="form-control">
+            <option selected>Choose</option>
+            <option>Administrador</option>
+            <option>Proveedor</option>
+          </select>
+        </div>
+      <div class="form-group">
+      </div>
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </form>
+  </div>
     <!-- Footer del sitio -->
 
     <footer class="footer fixed-bottom bg-light py-1">
