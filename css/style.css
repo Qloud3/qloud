@@ -43,3 +43,17 @@
 .datatable table {
         margin-bottom: 0;
 }
+
+/*
+* Form
+*/
+
+.form-registro-ventas {
+        max-width: 400px;
+        margin: 30px auto;
+        text-align: center;
+}
+
+.container {
+        margin-bottom: 100px;
+}
