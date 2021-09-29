@@ -153,7 +153,7 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
     </li>
     <li>Santiago Carmona
         <p>
-            Presentación
+            Ingeniero civil de Villavicencio 
         </p>
     </li>
 </ul>
