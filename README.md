@@ -153,7 +153,7 @@ A continuación podrá encontrar algunos detalles de los creadores de este proye
     </li>
     <li>Santiago Carmona
         <p>
-            Ingeniero civil de Villavicencio 
+            Ingeniero civil de la UNAL, 25 años, nacido en Villavicencio, apasionado por la tecnología y la programación. Estudiante de MisionTIC 2022 en la Universidad de Antioquia.
         </p>
     </li>
 </ul>
