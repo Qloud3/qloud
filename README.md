@@ -22,7 +22,7 @@
 <p align="center">
   <a href="https://github.com/Qloud3/Qloud">
   <!-- Aca debemos colocar nuestro logo una vez empecemos con el diseño del producto -->
-    <img src="images/qloud-logo.svg" alt="Logo" width="180">
+    <img src="./src/logo.svg" alt="Logo" width="180">
   </a>
 
   <h3 align="center">Project Qloud</h3>
