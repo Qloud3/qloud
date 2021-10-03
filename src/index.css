@@ -11,3 +11,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/*
+* Login
+*/
+
+.wrapper {
+  background: rgb(157, 208, 236);
+  background: linear-gradient(165deg, rgba(157, 208, 236, 0.2497199563419118) 0%, rgba(124, 143, 215, 0.2497199563419118) 100%);
+  min-height: calc(100vh - 80px);
+}
+
+.wrapper form input {
+  border-radius: 10px 10px 0px 0px;
+  border: 0px;
+  border-bottom: 3px solid #7c8fd7;
+}
+.wrapper form label{
+  color: #9dd0ec;
+}
+.wrapper form a{
+  color: #7c8fd7;
+}
+.wrapper form button{
+  border: 0;
+  background-color: #9dd0ec;
+  border-radius: 10px 10px 0px 0px;
+}
+.wrapper form button:hover{
+  border: 0;
+  background-color: #7c8fd7;
+  border-radius: 10px 10px 0px 0px;
+}

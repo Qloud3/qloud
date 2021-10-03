@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Menu.module.css";
+import logo from './../../logo.svg';
 import { NavLink } from "react-router-dom";
 import {
   Collapse,
@@ -23,7 +24,7 @@ const Menu = (props) => {
   return (
     <div>
       <Navbar color="light" light expand="md">
-        <NavbarBrand href="/">reactstrap</NavbarBrand>
+        <NavbarBrand href="/"><img src={logo} alt="logo" width="100px" /></NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
