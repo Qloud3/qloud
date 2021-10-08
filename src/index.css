@@ -42,3 +42,22 @@ code {
   background-color: #7c8fd7;
   border-radius: 10px 10px 0px 0px;
 }
+
+
+/*
+* Header sections 
+*/
+
+.section-title {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.section-title p {
+  margin: 0;
+}
+
+.table-container{
+  background-color: #fff;
+  padding: 20px;
+}
