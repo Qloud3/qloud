@@ -14,43 +14,8 @@ import {
   Table,
 } from "reactstrap";
 
-const data = [
-  {
-    id: 1,
-    nombre: "usuario 1",
-    cedula: "10235689",
-    telefono: "7777777",
-    estado: "activo",
-    rol: "admin",
-  },
-  {
-    id: 2,
-    nombre: "usuario 2",
-    cedula: "10235689",
-    telefono: "7777777",
-    estado: "activo",
-    rol: "vendedor",
-  },
-  {
-    id: 3,
-    nombre: "usuario 3",
-    cedula: "10235689",
-    telefono: "7777777",
-    estado: "activo",
-    rol: "usuario",
-  },
-  {
-    id: 4,
-    nombre: "usuario 4",
-    cedula: "10235689",
-    telefono: "7777777",
-    estado: "activo",
-    rol: "visor",
-  },
-];
-
 const BASE_URL = process.env.REACT_APP_API_URL;
-const PATH_CUSTOMERS = "usuarios";
+const PATH_USUARIOS = "usuarios";
 class Usuarios extends React.Component {
   constructor(props) {
     super(props);
@@ -60,7 +25,7 @@ class Usuarios extends React.Component {
       modalActualizar: false,
       modalInsertar: false,
       form: {
-        id: "",
+        _id: "",
         nombre: "",
         cedula: "",
         telefono: "",
@@ -70,9 +35,9 @@ class Usuarios extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   this.cargarUsuarios();
-  // }
+  componentDidMount() {
+    this.cargarUsuarios();
+  }
 
   mostrarModalActualizar = (dato) => {
     this.setState({ modalActualizar: true, form: dato });
@@ -83,7 +48,16 @@ class Usuarios extends React.Component {
   };
 
   mostrarModalInsertar = () => {
-    this.setState({ modalInsertar: true });
+    this.setState({
+      modalInsertar: true,
+      form: {
+        nombre: "",
+        cedula: "",
+        telefono: "",
+        estado: "",
+        rol: "",
+      },
+    });
   };
 
   cerrarModalInsertar = () => {
@@ -91,22 +65,8 @@ class Usuarios extends React.Component {
   };
 
   editar = (dato) => {
-    let contador = 0;
-    let arrayUsuarios = this.state.data;
-    arrayUsuarios.map((registro) => {
-      if (dato._id === registro._id) {
-        arrayUsuarios[contador].nombre = dato.nombre;
-        arrayUsuarios[contador].cedula = dato.cedula;
-        arrayUsuarios[contador].telefono = dato.telefono;
-        arrayUsuarios[contador].estado = dato.estado;
-        arrayUsuarios[contador].rol = dato.rol;
-      }
-      contador++;
-    });
-    this.setState({
-      data: arrayUsuarios,
-      modalActualizar: false,
-    });
+    this.actualizarUsuario(dato);
+    this.setState({ modalActualizar: false });
   };
 
   eliminar = (dato) => {
@@ -115,25 +75,14 @@ class Usuarios extends React.Component {
     );
 
     if (option) {
-      let contador = 0;
-      let arrayUsuarios = this.state.data;
-      arrayUsuarios.map((registro) => {
-        if (dato.id === registro._id) {
-          arrayUsuarios.splice(contador, 1);
-        }
-        contador++;
-      });
-      this.setState({
-        data: arrayUsuarios,
-        modalInsertar: false,
-      });
+      this.borrarUsuario(dato._id);
     }
   };
 
   insertar = () => {
     let newUsuario = { ...this.state.form };
 
-    this.crearCustomer(newUsuario);
+    this.crearUsuario(newUsuario);
 
     this.setState({ modalInsertar: false });
   };
@@ -172,6 +121,9 @@ class Usuarios extends React.Component {
         <br />
         <div className="table-container">
           <Table>
+            {this.state.mostrarCargando ? (
+              <Spinner size="xl" type="grow" color="primary" />
+            ) : null}
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -361,7 +313,7 @@ class Usuarios extends React.Component {
 
           <ModalFooter>
             <Button color="primary" onClick={() => this.insertar()}>
-              Insertar
+            Crear
             </Button>
             <Button
               className="btn btn-danger"
@@ -383,7 +335,7 @@ class Usuarios extends React.Component {
       body: JSON.stringify(usuario),
     };
 
-    fetch(`${BASE_URL}${PATH_CUSTOMERS}`, requestOptions)
+    fetch(`${BASE_URL}${PATH_USUARIOS}`, requestOptions)
       .then((result) => result.json())
       .then(
         (result) => {
@@ -396,7 +348,7 @@ class Usuarios extends React.Component {
   }
 
   cargarUsuarios() {
-    fetch(`${BASE_URL}${PATH_CUSTOMERS}`)
+    fetch(`${BASE_URL}${PATH_USUARIOS}`)
       .then((result) => result.json())
       .then(
         (result) => {
@@ -407,6 +359,41 @@ class Usuarios extends React.Component {
         // Nota: es importante manejar errores aquí y no en
         // un bloque catch() para que no interceptemos errores
         // de errores reales en los componentes.
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  borrarUsuario(id) {
+    const requestOptions = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch(`${BASE_URL}${PATH_USUARIOS}/${id}`, requestOptions)
+      .then((result) => result.json())
+      .then(
+        (result) => {
+          this.cargarUsuarios();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  actualizarUsuario(usuario) {
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(usuario),
+    };
+    fetch(`${BASE_URL}${PATH_USUARIOS}/${usuario._id}`, requestOptions)
+      .then((result) => result.json())
+      .then(
+        (result) => {
+          this.cargarUsuarios();
+        },
         (error) => {
           console.log(error);
         }

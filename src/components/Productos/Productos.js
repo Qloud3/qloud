@@ -14,49 +14,18 @@ import {
   Table,
 } from "reactstrap";
 
-const data = [
-  {
-    id: 1,
-    nombre: "Producto 1",
-    descripcion: "Nuevo producto desarrollado",
-    valor_unitario: "10.000",
-    disponible: "Si",
-  },
-  {
-    id: 2,
-    nombre: "Producto 2",
-    descripcion: "Nuevo producto desarrollado",
-    valor_unitario: "20.000",
-    disponible: "Si",
-  },
-  {
-    id: 3,
-    nombre: "Producto 3",
-    descripcion: "Nuevo producto desarrollado",
-    valor_unitario: "30.000",
-    disponible: "Si",
-  },
-  {
-    id: 4,
-    nombre: "Producto 4",
-    descripcion: "Nuevo producto desarrollado",
-    valor_unitario: "40.000",
-    disponible: "Si",
-  },
-];
-
 const BASE_URL = process.env.REACT_APP_API_URL;
-const PATH_CUSTOMERS = "productos";
+const PATH_PRODUCTOS = "productos";
 class Productos extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: data,
+      data: [],
       modalActualizar: false,
       modalInsertar: false,
       form: {
-        id: "",
+        _id: "",
         nombre: "",
         descripcion: "",
         valor_unitario: "",
@@ -65,9 +34,9 @@ class Productos extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   this.cargarProductos();
-  // }
+  componentDidMount() {
+    this.cargarProductos();
+  }
 
   mostrarModalActualizar = (dato) => {
     this.setState({ modalActualizar: true, form: dato });
@@ -78,7 +47,15 @@ class Productos extends React.Component {
   };
 
   mostrarModalInsertar = () => {
-    this.setState({ modalInsertar: true });
+    this.setState({
+      modalInsertar: true,
+      form: {
+        nombre: "",
+        descripcion: "",
+        valor_unitario: "",
+        disponible: "",
+      },
+    });
   };
 
   cerrarModalInsertar = () => {
@@ -86,21 +63,8 @@ class Productos extends React.Component {
   };
 
   editar = (dato) => {
-    let contador = 0;
-    let arrayProductos = this.state.data;
-    arrayProductos.map((registro) => {
-      if (dato._id === registro._id) {
-        arrayProductos[contador].nombre = dato.nombre;
-        arrayProductos[contador].descripcion = dato.descripcion;
-        arrayProductos[contador].valor_unitario = dato.valor_unitario;
-        arrayProductos[contador].disponible = dato.disponible;
-      }
-      contador++;
-    });
-    this.setState({
-      data: arrayProductos,
-      modalActualizar: false,
-    });
+    this.actualizarProducto(dato);
+    this.setState({ modalActualizar: false });
   };
 
   eliminar = (dato) => {
@@ -109,25 +73,14 @@ class Productos extends React.Component {
     );
 
     if (option) {
-      let contador = 0;
-      let arrayProductos = this.state.data;
-      arrayProductos.map((registro) => {
-        if (dato.id === registro._id) {
-          arrayProductos.splice(contador, 1);
-        }
-        contador++;
-      });
-      this.setState({
-        data: arrayProductos,
-        modalInsertar: false,
-      });
+      this.borrarProducto(dato._id);
     }
   };
 
   insertar = () => {
     let newProducto = { ...this.state.form };
 
-    this.crearCustomer(newProducto);
+    this.crearProducto(newProducto);
 
     this.setState({ modalInsertar: false });
   };
@@ -166,6 +119,9 @@ class Productos extends React.Component {
         <br />
         <div className="table-container">
           <Table>
+            {this.state.mostrarCargando ? (
+              <Spinner size="xl" type="grow" color="primary" />
+            ) : null}
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -284,7 +240,7 @@ class Productos extends React.Component {
         <Modal isOpen={this.state.modalInsertar}>
           <ModalHeader>
             <div>
-              <h3>Insertar Producto</h3>
+              <h3>Crear Producto</h3>
             </div>
           </ModalHeader>
 
@@ -333,7 +289,7 @@ class Productos extends React.Component {
 
           <ModalFooter>
             <Button color="primary" onClick={() => this.insertar()}>
-              Insertar
+              Crear
             </Button>
             <Button
               className="btn btn-danger"
@@ -355,7 +311,7 @@ class Productos extends React.Component {
       body: JSON.stringify(producto),
     };
 
-    fetch(`${BASE_URL}${PATH_CUSTOMERS}`, requestOptions)
+    fetch(`${BASE_URL}${PATH_PRODUCTOS}`, requestOptions)
       .then((result) => result.json())
       .then(
         (result) => {
@@ -368,7 +324,7 @@ class Productos extends React.Component {
   }
 
   cargarProductos() {
-    fetch(`${BASE_URL}${PATH_CUSTOMERS}`)
+    fetch(`${BASE_URL}${PATH_PRODUCTOS}`)
       .then((result) => result.json())
       .then(
         (result) => {
@@ -379,6 +335,41 @@ class Productos extends React.Component {
         // Nota: es importante manejar errores aquí y no en
         // un bloque catch() para que no interceptemos errores
         // de errores reales en los componentes.
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  borrarProducto(id) {
+    const requestOptions = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch(`${BASE_URL}${PATH_PRODUCTOS}/${id}`, requestOptions)
+      .then((result) => result.json())
+      .then(
+        (result) => {
+          this.cargarProductos();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  actualizarProducto(producto) {
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(producto),
+    };
+    fetch(`${BASE_URL}${PATH_PRODUCTOS}/${producto._id}`, requestOptions)
+      .then((result) => result.json())
+      .then(
+        (result) => {
+          this.cargarProductos();
+        },
         (error) => {
           console.log(error);
         }
