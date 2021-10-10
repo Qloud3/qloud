@@ -1,9 +1,9 @@
 {
     "mongodb": {
-        "server": "cluster0.rqtds.mongodb.net",
-        "database": "qloud-db",
-        "user": "qloud_webmaster",
-        "password": "JA06GIZmcuEgtVFZ",
+        "server": "qloud.tlwxp.mongodb.net",
+        "database": "qloud",
+        "user": "qloud",
+        "password": "qloud",
         "params": ""
     }
 }
