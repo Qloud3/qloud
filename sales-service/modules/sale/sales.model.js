@@ -4,29 +4,32 @@
     var Schema = mongoose.Schema;
   
     var SaleSchema = new Schema({
-      firstName: {
-        type: String,
-        required: true,
-      },
-      lastName: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
-      phoneNumber: {
+      valorTotal: {
         type: Number,
         required: true,
       },
-      address: String,
-      city: String,
-      state: String,
-      zipCode: String,
-      country: String,
+      fechaVenta: {
+        type: Date,
+        required: true,
+      },
+      documentoCliente: {
+        type: Number,
+        required: true,
+      },
+      nombreCliente: {
+        type: String,
+        required: true,
+      },
+      nombreVendedor: {
+        type: String,
+        required: true
+      },
+      estado: {
+        type: String,
+        required: true,
+      }
     });
   
-    module.exports = mongoose.model("sales", SaleSchema);
+    module.exports = mongoose.model("sale", SaleSchema);
   })();
   

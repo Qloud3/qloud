@@ -14,19 +14,16 @@
   
     function addSale(req, res, next) {
       const {
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        address,
-        city,
-        state,
-        zipCode,
-        country,
+        valorTotal,
+        fechaVenta,
+        documentoCliente,
+        nombreCliente,
+        nombreVendedor,
+        estado,
       } = req.body;
       try {
-        if (!firstName || !lastName) {
-          throw new BadRequest("Campos requeridos no encontrados: firstName or lastName");
+        if (!valorTotal || !documentoCliente) {
+          throw new BadRequest("Campos requeridos no encontrados: valorTotal or documentoCliente");
         }
         SaleService.createSale(req.body).then(success).catch(failure);
   

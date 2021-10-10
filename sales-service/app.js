@@ -8,7 +8,7 @@ var logger = require("morgan");
 var app = express();
 
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
-var DBController = require('./modules/sales/sales.module')().DBController; 
+var DBController = require('./modules/sale/sales.module')().DBController; 
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 MongoDBUtil.init();
 app.use(cors());
-app.use('./sales', DBController);
+app.use('./ventas', DBController);
 
 app.get("/", function (req, res) {
   var pkg = require(path.join(__dirname, "package.json"));
