@@ -1,0 +1,9 @@
+.Productos {}
+
+
+body {
+    background: rgb(157, 208, 236);
+    background: linear-gradient(165deg, rgba(157, 208, 236, 0.2497199563419118) 0%, rgba(124, 143, 215, 0.2497199563419118) 100%);
+    min-height: 100vh;
+}
+
