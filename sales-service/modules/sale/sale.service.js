@@ -9,7 +9,7 @@
       deleteSale: deleteSale,
     };
   
-    var SaleModel = require("./sales.module")().SaleModel;
+    var SaleModel = require("./sale.module")().SaleModel;
   
     function createSale(sale) {
       return SaleModel.create(sale);
