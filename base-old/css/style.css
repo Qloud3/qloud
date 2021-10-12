@@ -1,0 +1,59 @@
+/*
+* General
+*/
+
+.wrapper {
+        background: rgb(157, 208, 236);
+        background: linear-gradient(165deg, rgba(157, 208, 236, 0.2497199563419118) 0%, rgba(124, 143, 215, 0.2497199563419118) 100%);
+        min-height: 100vh;
+}
+
+.wrapper form input {
+        border-radius: 10px 10px 0px 0px;
+        border: 0px;
+        border-bottom: 3px solid #7c8fd7;
+}
+
+.footer {
+        width: 100vw;
+        min-height: 10px;
+}
+
+/*
+* Header sections 
+*/
+
+.section-title {
+        background-color: #fff;
+        padding: 20px;
+}
+
+.section-title p {
+        margin: 0;
+}
+
+/*
+* Page sections 
+*/
+.datatable {
+        background-color: #fff;
+        margin-bottom: 80px;
+}
+
+.datatable table {
+        margin-bottom: 0;
+}
+
+/*
+* Form
+*/
+
+.form-registro-ventas {
+        max-width: 400px;
+        margin: 30px auto;
+        text-align: center;
+}
+
+.container {
+        margin-bottom: 100px;
+}
