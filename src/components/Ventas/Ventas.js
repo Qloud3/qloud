@@ -15,13 +15,13 @@ import {
 } from "reactstrap";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
-const PATH_VENTAS = "venta";
+const PATH_VENTAS = "ventas";
 class Ventas extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: data,
+      data: [],
       modalActualizar: false,
       modalInsertar: false,
       form: {
@@ -29,7 +29,7 @@ class Ventas extends React.Component {
         valor_total: "",
         fecha_venta: "",
         documento_cliente: "",
-        nombre_cliente: "",
+        cliente: "",
         vendedor: "",
         estado: ""
       },
@@ -55,7 +55,7 @@ class Ventas extends React.Component {
         valor_total: "",
         fecha_venta: "",
         documento_cliente: "",
-        nombre_cliente: "",
+        cliente: "",
         vendedor: "",
         estado: "",
       },
@@ -84,7 +84,7 @@ class Ventas extends React.Component {
   insertar = () => {
     let newVenta = { ...this.state.form };
 
-    this.crearventas(newVenta);
+    this.crearVenta(newVenta);
 
     this.setState({ modalInsertar: false });
   };
@@ -108,7 +108,7 @@ class Ventas extends React.Component {
             <p>En este módulo podras administrar las venta.</p>
           </Col>
           <Col md="4" className="d-flex justify-content-end">
-            <div class="align-self-end">
+            <div className="align-self-end">
               <Button
                 color="primary w-100"
                 onClick={() => this.mostrarModalInsertar()}
@@ -144,7 +144,7 @@ class Ventas extends React.Component {
                   <td>{dato.valor_total}</td>
                   <td>{dato.fecha_venta}</td>
                   <td>{dato.documento_cliente}</td>
-                  <td>{dato.nombre_cliente}</td>
+                  <td>{dato.cliente}</td>
                   <td>{dato.vendedor}</td>
                   <td>{dato.estado}</td>
                   <td>
@@ -187,7 +187,7 @@ class Ventas extends React.Component {
               <label>Valor Total:</label>
               <input
                 className="form-control"
-                name="valor-total"
+                name="valor_total"
                 type="text"
                 onChange={this.handleChange}
                 required
@@ -199,7 +199,7 @@ class Ventas extends React.Component {
               <label>Fecha Venta:</label>
               <input
                 className="form-control"
-                name="fecha-venta"
+                name="fecha_venta"
                 type="text"
                 onChange={this.handleChange}
                 value={this.state.form.fecha_venta}
@@ -210,7 +210,7 @@ class Ventas extends React.Component {
               <label>Documento Cliente:</label>
               <input
                 className="form-control"
-                name="documento-cliente"
+                name="documento_cliente"
                 type="text"
                 onChange={this.handleChange}
                 value={this.state.form.documento_cliente}
@@ -221,10 +221,10 @@ class Ventas extends React.Component {
               <label>Nombre Cliente:</label>
               <input
                 className="form-control"
-                name="nombre-cliente"
+                name="cliente"
                 type="text"
                 onChange={this.handleChange}
-                value={this.state.form.nombre_cliente}
+                value={this.state.form.cliente}
               />
             </FormGroup>
             <FormGroup>
@@ -277,7 +277,7 @@ class Ventas extends React.Component {
               <label>Valor Total:</label>
               <input
                 className="form-control"
-                name="valor-total"
+                name="valor_total"
                 type="text"
                 onChange={this.handleChange}
                 required
@@ -288,7 +288,7 @@ class Ventas extends React.Component {
               <label>Fecha Venta:</label>
               <input
                 className="form-control"
-                name="fecha-venta"
+                name="fecha_venta"
                 type="text"
                 onChange={this.handleChange}
               />
@@ -298,7 +298,7 @@ class Ventas extends React.Component {
               <label>Documento cliente:</label>
               <input
                 className="form-control"
-                name="documento-cliente"
+                name="documento_cliente"
                 type="text"
                 onChange={this.handleChange}
               />
@@ -308,7 +308,7 @@ class Ventas extends React.Component {
               <label>Nombre Cliente:</label>
               <input
                 className="form-control"
-                name="nombre-cliente"
+                name="cliente"
                 type="text"
                 onChange={this.handleChange}
               />

@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./../../logo.svg";
-import { Table, Button, Container, FormGroup, Form } from "reactstrap";
-import styles from "./Login.module.css";
+import { Button, Container, FormGroup, Form } from "reactstrap";
+// import styles from "./Login.module.css";
 
 class Login extends React.Component {
   constructor(props) {

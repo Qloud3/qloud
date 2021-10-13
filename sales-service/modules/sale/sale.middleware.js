@@ -14,17 +14,17 @@
 
   function addSale(req, res, next) {
     const {
-      documentoCliente,
-      nombreCliente,
-      nombreVendedor,
+      documento_cliente,
+      cliente,
+      vendedor,
       estado,
-      fechaVenta,
-      valorTotal,
+      fecha_venta,
+      valor_total,
     } = req.body;
     try {
-      if (!valorTotal || !documentoCliente) {
+      if (!valor_total || !documento_cliente) {
         throw new BadRequest(
-          "Campos requeridos no encontrados: valorTotal or documentoCliente"
+          "Campos requeridos no encontrados: Valor Total o Documento Cliente"
         );
       }
       SaleService.createSale(req.body).then(success).catch(failure);
@@ -69,7 +69,7 @@
   }
 
   function modifySale(req, res, next) {
-    SaleService.updateSale(req.params.SaleId, req.body)
+    SaleService.updateSale(req.params.saleId, req.body)
       .then(success)
       .catch(error);
 
@@ -84,7 +84,7 @@
   }
 
   function removeSale(req, res, next) {
-    SaleService.deleteSale(req.params.SaleId).then(success).catch(error);
+    SaleService.deleteSale(req.params.saleId).then(success).catch(error);
 
     function success(data) {
       req.response = data;

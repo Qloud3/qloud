@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Usuarios.module.css";
+// import styles from "./Usuarios.module.css";
 import {
   Button,
   Col,
@@ -21,7 +21,7 @@ class Usuarios extends React.Component {
     super(props);
 
     this.state = {
-      data: data,
+      data: [],
       modalActualizar: false,
       modalInsertar: false,
       form: {

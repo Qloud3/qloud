@@ -2,24 +2,7 @@
   "name": "qloud",
   "version": "0.1.0",
   "private": true,
-  "version": "1.0.0",
-  "description": "API para conexión Frontend/Backend",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Qloud3/Qloud.git"
-  },
-  "author": "Qloud",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Qloud3/Qloud/issues"
-  },
-  "homepage": "https://github.com/Qloud3/Qloud#readme",
   "dependencies": {
-    "express": "^4.17.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
