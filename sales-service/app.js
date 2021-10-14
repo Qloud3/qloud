@@ -14,6 +14,7 @@ admin.initializeApp({
 
 var app = express();
 
+// controladores db
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
 var SaleController = require('./modules/sale/sale.module')().SaleController; 
 var ProductoController = require('./modules/producto/producto.module')().ProductoController; 
