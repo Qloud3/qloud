@@ -5,6 +5,13 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+const admin = require("firebase-admin"); 
+const serviceAccount = require("./config/firebase/qloud-dev-33c0f-firebase-adminsdk-gj9i4-b13e08c58b.json"); 
+
+admin.initializeApp({ 
+  credential: admin.credential.cert(serviceAccount) 
+});
+
 var app = express();
 
 var MongoDBUtil = require('./modules/mongodb/mongodb.module').MongoDBUtil;
@@ -20,6 +27,22 @@ app.use(cookieParser());
 MongoDBUtil.init();
 
 app.use(cors());
+
+function checkAuth(req, res, next) {
+  if (req.headers?.authorization?.startsWith('Bearer ')) {
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+    admin.auth().verifyIdToken(idToken)
+      .then(() => {
+        next()
+      }).catch((error) => {
+        res.status(403).send('Unauthorized')
+      });
+  } else {
+    res.status(403).send('Unauthorized')
+  }
+}
+
+app.use('*', checkAuth);
 
 app.use('/ventas', SaleController);
 app.use('/productos', ProductoController);
