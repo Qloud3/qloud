@@ -1,58 +1,93 @@
-import React from "react";
-import logo from "./../../logo.svg";
-import { Button, Container, FormGroup, Form } from "reactstrap";
-// import styles from "./Login.module.css";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Container,
+  FormGroup,
+  ButtonGroup,
+  ListGroup,
+  ListGroupItem
+} from "reactstrap";
+import {
+  auth,
+  signInEmailAndPassword,
+  signInWithGoogle,
+} from "../Firebase/Firebase";
+import { useHistory } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
-  render() {
-    return (
-      <Container
-        fluid
-        className="wrapper d-flex flex-column justify-content-center align-items-center"
-      >
-        <img src={logo} alt="logo" width="180px" className="mb-5" />
-        <Form className="col-lg-3 col-md-6 col-sm-11 py-5 px-4 bg-light rounded">
-          <FormGroup>
-            <label className="w-100">Usuario o correo electrónico:</label>
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, loading, error] = useAuthState(auth);
+  const [errors, seterrors] = useState('');
+  const history = useHistory();
 
-            <input
-              className="form-control mt-2"
-              name="user"
-              type="text"
-              required
-            />
-          </FormGroup>
-          <FormGroup className="mt-4">
-            <label className="w-100">Contraseña:</label>
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (user) { history.replace("/users"); }
+  }, [user, loading]);
 
-            <input
-              className="form-control mt-2"
-              name="password"
-              type="password"
-              required
-            />
-          </FormGroup>
-          <div class="d-flex justify-content-end my-3">
-            <p>
-              Olvidé mi <a href="#">contraseña</a>
-            </p>
-          </div>
-          <Button color="primary w-100" onSubmit="">
-            Iniciar Sesión
-          </Button>
-          <div class="d-flex justify-content-center mt-4">
-            <a href="#" className="small">
-              Términos y Condiciones
-            </a>
-          </div>
-        </Form>
-      </Container>
-    );
-  }
+  return (
+    <Container>
+      <FormGroup>
+        <label>
+          Email:
+        </label>
+        <input
+          className="form-control"
+          name="email"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Correo electrónico"
+          required
+        />
+      </FormGroup>
+      <FormGroup>
+        <label>
+          Clave:
+        </label>
+        <input
+          className="form-control"
+          name="password"
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          required
+        />
+      </FormGroup>
+
+      <ButtonGroup>
+        <Button
+          color="primary"
+          type="submit"
+          onClick={() => signInEmailAndPassword(email, password)}
+        >
+          Accede
+        </Button>
+
+        <Button
+          color="danger"
+          onClick={signInWithGoogle}
+        >
+          Accede con Google
+        </Button>
+      </ButtonGroup>
+
+
+      <br />
+
+      <ListGroup>
+        <ListGroupItem tag="a" href="/reset">Olvide mi clave</ListGroupItem>
+        <ListGroupItem tag="a" href="/register">Crea tu cuenta</ListGroupItem>
+      </ListGroup>
+
+    </Container>
+  );
 }
 
 export default Login;
