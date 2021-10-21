@@ -5,6 +5,7 @@ import Login from "./components/Login/Login";
 import Ventas from "./components/Ventas/Ventas";
 import Productos from "./components/Productos/Productos";
 import Usuarios from "./components/Usuarios/Usuarios";
+import Register from './components/Register/Register';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
         <Menu />
         <Switch>
           <Route exact path="/" component={Login} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
           <Route exact path="/ventas" component={Ventas} />
           <Route exact path="/productos" component={Productos} />
           <Route exact path="/usuarios" component={Usuarios} />
