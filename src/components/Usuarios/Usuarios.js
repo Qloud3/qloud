@@ -1,103 +1,231 @@
-import React from "react";
-// import styles from "./Usuarios.module.css";
+import React from 'react';
 import {
-  Button,
-  Col,
-  Container,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-  Spinner,
+  Alert,
   Table,
+  Button,
+  Container,
+  Modal,
+  ModalHeader,  
+  Spinner,
+  ModalBody,
+  FormGroup,
+  ModalFooter,
+  Row,
+  Col
 } from "reactstrap";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
+
+const data = [
+
+];
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 const PATH_USUARIOS = "usuarios";
-class Usuarios extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      data: [],
-      modalActualizar: false,
-      modalInsertar: false,
-      form: {
-        _id: "",
-        nombre: "",
-        cedula: "",
-        telefono: "",
-        estado: "",
-        rol: "",
-      },
-    };
-  }
+const Usuarios = () => {
 
-  componentDidMount() {
-    this.cargarUsuarios();
-  }
+  const auth = getAuth();
+  const [modalActualizar, setModalActualizar] = React.useState(false);
+  const [modalInsertar, setModalInsertar] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [errors, setErrors] = React.useState(null);
+  const [newVal, setNewVal] = React.useState(0);
+  const [user, loading, error] = useAuthState(auth);
+  const history = useHistory();
 
-  mostrarModalActualizar = (dato) => {
-    this.setState({ modalActualizar: true, form: dato });
-  };
-
-  cerrarModalActualizar = () => {
-    this.setState({ modalActualizar: false });
-  };
-
-  mostrarModalInsertar = () => {
-    this.setState({
-      modalInsertar: true,
-      form: {
-        nombre: "",
-        cedula: "",
-        telefono: "",
-        estado: "",
-        rol: "",
-      },
+  const logout = () => {
+    auth.signOut().then(function () {
+      // Sign-out successful.
+      console.log("loggedout");
+    }).catch((error) => {
+      // An error happened.
+      const errorCode = error.code;
+      const errorMessage = error.message;
     });
   };
 
-  cerrarModalInsertar = () => {
-    this.setState({ modalInsertar: false });
-  };
-
-  editar = (dato) => {
-    this.actualizarUsuario(dato);
-    this.setState({ modalActualizar: false });
-  };
-
-  eliminar = (dato) => {
-    let option = window.confirm(
-      "¿Esta seguro de eliminar el usuario: " + dato.nombre + "?"
-    );
-
-    if (option) {
-      this.borrarUsuario(dato._id);
+  const [usuario, setUsuario] = React.useState({
+    data: data,
+    form: {
+      _id: "",
+      nombre: "",
+      cedula: "",
+      telefono: "",
+      estado: "",
+      rol: ""
     }
-  };
+  });
 
-  insertar = () => {
-    let newUsuario = { ...this.state.form };
+  React.useEffect(() => {
+    if (loading) return;
+    if (!user) return history.replace("/");
+  }, [usuario, loading]);
 
-    this.crearUsuario(newUsuario);
+  React.useEffect(() => {
+    if (!user) return history.replace("/");
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_USUARIOS}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setIsLoaded(true);
+            setUsuario({
+              ...usuario,
+              data: result
+            });
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          }
+        )
+    });
+  }, [newVal]);
 
-    this.setState({ modalInsertar: false });
-  };
-
-  handleChange = (e) => {
-    this.setState({
+  const handleChange = (e) => {
+    setUsuario((prevState) => ({
+      ...prevState,
       form: {
-        ...this.state.form,
+        ...prevState.form,
         [e.target.name]: e.target.value,
-      },
+      }
+    }));
+  };
+
+  const mostrarModalActualizar = (e) => {
+    let arregloUsuarios = usuario.data;
+    let userToModify;
+    arregloUsuarios.map((registro) => {
+      if (e.target.id === registro._id) {
+        userToModify = registro;
+      }
+    });
+    setUsuario({
+      ...usuario,
+      form: userToModify
+    });
+    setModalActualizar(true);
+  };
+
+  const cerrarModalActualizar = () => {
+    setModalActualizar(false);
+  };
+
+  const mostrarModalInsertar = () => {
+    setModalInsertar(true);
+  };
+
+  const cerrarModalInsertar = () => {
+    setModalInsertar(false);
+  };
+
+  const editar = () => {
+    let usuarioAModificar = { ...usuario.form };
+    actualizarUsuario(usuarioAModificar);
+    setModalActualizar(false);
+  };
+
+  const eliminar = (e) => {
+    let arregloUsuario = usuario.data;
+    arregloUsuario.map((registro) => {
+      if (e.target.id == registro._id) {
+        let opcion = window.confirm("¿Está seguro que desea eliminar el valor " + registro.nombre + "?");
+        if (opcion) {
+          borrarUsuario(registro._id);
+        }
+      }
     });
   };
 
-  render() {
+  const insertar = () => {
+    let usuarioACrear = { ...usuario.form };
+    crearUsuario(usuarioACrear);
+    setModalInsertar(false);
+  }
+
+  const crearUsuario = (usuarioACrear) =>{
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(usuarioACrear)
+      };
+      fetch(`${BASE_URL}${PATH_USUARIOS}`, requestOptions)
+        .then(
+          (response) => {
+            response.json();
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          })
+    });
+  }
+
+  const borrarUsuario = (id) => {
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_USUARIOS}/${id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+
+  const actualizarUsuario = (usuario) => {
+    user.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(usuario)
+      };
+      fetch(`${BASE_URL}${PATH_USUARIOS}/${usuario._id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+  if (error) {
+    return <Alert color="danger">
+      Error: {error.message}
+    </Alert>;
+  } else {
     return (
+
       <Container>
         <br />
         <Row className="section-title">
@@ -107,23 +235,16 @@ class Usuarios extends React.Component {
           </Col>
           <Col md="4" className="d-flex justify-content-end">
             <div class="align-self-end">
-              <Button
-                color="primary w-100"
-                onClick={() => this.mostrarModalInsertar()}
-              >
-                Crear
-              </Button>
+              <Button color="success" onClick={mostrarModalInsertar}>Crear</Button>
+              <Button outline color="secondary" onClick={logout} block>Cerrar sesión</Button>
             </div>
           </Col>
         </Row>
-
-        <br />
-        <br />
         <div className="table-container">
           <Table>
-            {this.state.mostrarCargando ? (
+{/*             {this.state.mostrarCargando ? (
               <Spinner size="xl" type="grow" color="primary" />
-            ) : null}
+            ) : null} */}
             <thead>
               <tr>
                 <th>Nombre</th>
@@ -136,7 +257,7 @@ class Usuarios extends React.Component {
             </thead>
 
             <tbody>
-              {this.state.data.map((dato) => (
+              {usuario.data.map((dato) => (
                 <tr key={dato._id}>
                   <td>{dato.nombre}</td>
                   <td>{dato.cedula}</td>
@@ -145,12 +266,12 @@ class Usuarios extends React.Component {
                   <td>{dato.rol}</td>
                   <td>
                     <Button
-                      color="primary"
-                      onClick={() => this.mostrarModalActualizar(dato)}
+                      color="primary" id={dato._id}
+                      onClick={mostrarModalActualizar}
                     >
                       Editar
                     </Button>{" "}
-                    <Button color="danger" onClick={() => this.eliminar(dato)}>
+                    <Button color="danger" id={dato._id} onClick={eliminar}>
                       Eliminar
                     </Button>
                   </td>
@@ -160,10 +281,10 @@ class Usuarios extends React.Component {
           </Table>
         </div>
 
-        <Modal isOpen={this.state.modalActualizar}>
+        <Modal isOpen={modalActualizar}>
           <ModalHeader>
             <div>
-              <h3>Actualizar Usuario</h3>
+              <h3>Actualizar Usuario {usuario.form._id}</h3>
             </div>
           </ModalHeader>
 
@@ -175,7 +296,7 @@ class Usuarios extends React.Component {
                 className="form-control"
                 readOnly
                 type="text"
-                value={this.state.form._id}
+                value={usuario.form._id}
               />
             </FormGroup>
 
@@ -185,9 +306,9 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="nombre"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
-                value={this.state.form.nombre}
+                value={usuario.form.nombre}
               />
             </FormGroup>
 
@@ -197,8 +318,8 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="cedula"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.cedula}
+                onChange={handleChange}
+                value={usuario.form.cedula}
               />
             </FormGroup>
 
@@ -208,8 +329,8 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="telefono"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.telefono}
+                onChange={handleChange}
+                value={usuario.form.telefono}
               />
             </FormGroup>
 
@@ -219,8 +340,8 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="estado"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.estado}
+                onChange={handleChange}
+                value={usuario.form.estado}
               />
             </FormGroup>
             <FormGroup>
@@ -229,8 +350,8 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="rol"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.rol}
+                onChange={handleChange}
+                value={usuario.form.rol}
               />
             </FormGroup>
           </ModalBody>
@@ -238,20 +359,20 @@ class Usuarios extends React.Component {
           <ModalFooter>
             <Button
               color="primary"
-              onClick={() => this.editar(this.state.form)}
+              onClick={editar}
             >
               Actualizar
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalActualizar()}
+              onClick={cerrarModalActualizar}
             >
               Cancelar
             </Button>
           </ModalFooter>
         </Modal>
 
-        <Modal isOpen={this.state.modalInsertar}>
+        <Modal isOpen={modalInsertar}>
           <ModalHeader>
             <div>
               <h3>Crear usuario</h3>
@@ -265,7 +386,7 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="nombre"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
               />
             </FormGroup>
@@ -276,7 +397,7 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="cedula"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -286,7 +407,7 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="telefono"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -296,7 +417,7 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="estado"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -306,18 +427,18 @@ class Usuarios extends React.Component {
                 className="form-control"
                 name="rol"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
           </ModalBody>
 
           <ModalFooter>
-            <Button color="primary" onClick={() => this.insertar()}>
-            Crear
+            <Button color="primary" onClick={insertar}>
+              Crear
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalInsertar()}
+              onClick={cerrarModalInsertar}
             >
               Cancelar
             </Button>
@@ -326,79 +447,5 @@ class Usuarios extends React.Component {
       </Container>
     );
   }
-
-  crearUsuario(usuario) {
-    // Simple POST request with a JSON body using fetch
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(usuario),
-    };
-
-    fetch(`${BASE_URL}${PATH_USUARIOS}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarUsuarios();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  cargarUsuarios() {
-    fetch(`${BASE_URL}${PATH_USUARIOS}`)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.setState({
-            data: result,
-          });
-        },
-        // Nota: es importante manejar errores aquí y no en
-        // un bloque catch() para que no interceptemos errores
-        // de errores reales en los componentes.
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  borrarUsuario(id) {
-    const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(`${BASE_URL}${PATH_USUARIOS}/${id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarUsuarios();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  actualizarUsuario(usuario) {
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(usuario),
-    };
-    fetch(`${BASE_URL}${PATH_USUARIOS}/${usuario._id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarUsuarios();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
 }
-
 export default Usuarios;
