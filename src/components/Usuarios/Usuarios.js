@@ -49,7 +49,6 @@ const Usuarios = () => {
   const [usuario, setUsuario] = React.useState({
     data: data,
     form: {
-      _id: "",
       nombre: "",
       cedula: "",
       telefono: "",
@@ -234,7 +233,7 @@ const Usuarios = () => {
             <p>En este módulo podras administrar los usuarios.</p>
           </Col>
           <Col md="4" className="d-flex justify-content-end">
-            <div class="align-self-end">
+            <div className="align-self-end">
               <Button color="success" onClick={mostrarModalInsertar}>Crear</Button>
               <Button outline color="secondary" onClick={logout} block>Cerrar sesión</Button>
             </div>
