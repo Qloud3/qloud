@@ -137,7 +137,7 @@ const Productos = () => {
     let arregloProducto = producto.data;
     arregloProducto.map((registro) => {
       if (e.target.id === registro._id) {
-        let opcion = window.confirm("¿Está seguro que desea eliminar el valor " + registro.nombre + "?");
+        let opcion = window.confirm("¿Está seguro que desea eliminar el producto " + registro.nombre + "?");
         if (opcion) {
           borrarProducto(registro._id);
         }

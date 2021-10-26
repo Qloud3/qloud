@@ -136,7 +136,7 @@ const Usuarios = () => {
     let arregloUsuario = usuario.data;
     arregloUsuario.map((registro) => {
       if (e.target.id === registro._id) {
-        let opcion = window.confirm("¿Está seguro que desea eliminar el valor " + registro.nombre + "?");
+        let opcion = window.confirm("¿Está seguro que desea eliminar el usuario" + registro.nombre + "?");
         if (opcion) {
           borrarUsuario(registro._id);
         }
