@@ -256,7 +256,7 @@ const Productos = () => {
                   <td>{dato.nombre}</td>
                   <td>{dato.descripcion}</td>
                   <td>{dato.valor_unitario}</td>
-                  <td>{dato.disponible}</td>
+                  <td>{dato.disponible ? 'Si' : 'No'}</td>
                   <td>
                     <Button
                       color="primary" id={dato._id}
