@@ -39,6 +39,7 @@ const Productos = () => {
   const logout = () => {
     auth.signOut().then(function () {
       // Sign-out successful.
+      history.replace("/");
       console.log("loggedout");
     }).catch((error) => {
       // An error happened.
