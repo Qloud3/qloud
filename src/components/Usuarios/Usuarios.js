@@ -6,7 +6,6 @@ import {
   Container,
   Modal,
   ModalHeader,  
-  Spinner,
   ModalBody,
   FormGroup,
   ModalFooter,
@@ -136,7 +135,7 @@ const Usuarios = () => {
   const eliminar = (e) => {
     let arregloUsuario = usuario.data;
     arregloUsuario.map((registro) => {
-      if (e.target.id == registro._id) {
+      if (e.target.id === registro._id) {
         let opcion = window.confirm("¿Está seguro que desea eliminar el valor " + registro.nombre + "?");
         if (opcion) {
           borrarUsuario(registro._id);
@@ -234,16 +233,14 @@ const Usuarios = () => {
           </Col>
           <Col md="4" className="d-flex justify-content-end">
             <div className="align-self-end">
-              <Button color="success" onClick={mostrarModalInsertar}>Crear</Button>
+              <Button color="primary w-40" onClick={mostrarModalInsertar}>Crear</Button>
               <Button outline color="secondary" onClick={logout} block>Cerrar sesión</Button>
             </div>
           </Col>
         </Row>
         <div className="table-container">
           <Table>
-{/*             {this.state.mostrarCargando ? (
-              <Spinner size="xl" type="grow" color="primary" />
-            ) : null} */}
+
             <thead>
               <tr>
                 <th>Nombre</th>
