@@ -28,7 +28,7 @@ function Login() {
       return;
     }
     if (user) {
-      history.replace("/users");
+      history.replace("/usuarios");
     }
   }, [user, loading]);
 
