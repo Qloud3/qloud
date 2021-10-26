@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Qloud - Ventas</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link href="css/vendors/bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+
+<body class="wrapper">
+  <!-- Header del sitio -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/images/qloud-logo.svg" alt="Logo Qloud" width="120" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#ventas">Ventas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Productos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Usuarios</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown text-right">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Nombre Usuario
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <a class="dropdown-item" href="#">Cambiar contraseña</a>
+                </li>
+                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container mt-5">
+    <section class="section-title">
+      <div class="row">
+        <div class="col-12 col-md-8">
+          <h2>Modulo Ventas</h2>
+          <p>En este módulo podras registrar las ventas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-registro-ventas mt-5">
+      <form>
+        <div class="mb-3">
+          <label for="ValorTotalVenta" class="form-label">Valor total de venta</label>
+          <input type="number" class="form-control" id="ValorTotalVenta" aria-describedby="ValorTotalVenta">
+        </div>
+        <div class="mb-3">
+          <label for="FechaVenta" class="form-label">Fecha de venta</label>
+          <input type="date" class="form-control" id="FechaVenta" min="1990-01-01" max="2025-01-01">
+        </div>
+        <div class="mb-3">
+          <label for="DocId" class="form-label">Documento de identificación</label>
+          <input type="number" class="form-control" id="DocId" aria-describedby="DocumentoIdentificacion">
+        </div>
+        <div class="mb-3">
+          <label for="NombreCliente" class="form-label">Nombre del cliente</label>
+          <input type="text" class="form-control" id="NombreCliente">
+        </div>
+        <div class="mb-3">
+          <select class="form-select" aria-label="Seleccionar vendedor">
+            <option selected>Click aquí para seleccionar un vendedor</option>
+            <option value="1">Vendedor 1</option>
+            <option value="2">Vendedor 2</option>
+            <option value="3">Vendedor 3</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Registrar</button>
+        </div>
+      </form>
+    </section>
+
+
+
+  </div>
+  <!-- Footer del sitio -->
+  <footer class="footer fixed-bottom bg-light py-1">
+    <p class="copyright text-center small pt-3">
+      Copyright &copy;
+      <script type="text/javascript">
+        document.write(new Date().getFullYear());
+      </script>
+      | www.qloudcomputing.com
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+    crossorigin="anonymous"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
