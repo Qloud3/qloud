@@ -1,8 +1,0 @@
-{
-    "mongodb": {
-        "server": "qloud.tlwxp.mongodb.net",
-        "database": "qloud",
-        "user": "qloud",
-        "password": "MntfaOIE44yqXMvu"
-    }
-}

@@ -2,6 +2,9 @@
   "name": "qloud",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "15.x"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -39,9 +42,9 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ],
-    "engines": {
-      "node": "14.x"
-    }
+    ]
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   }
 }
