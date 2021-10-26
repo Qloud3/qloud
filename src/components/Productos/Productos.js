@@ -1,101 +1,230 @@
 import React from "react";
 // import styles from "./Productos.module.css";
 import {
-  Button,
-  Col,
-  Container,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-  Spinner,
+  Alert,
   Table,
+  Button,
+  Container,
+  Modal,
+  ModalHeader,  
+  ModalBody,
+  FormGroup,
+  ModalFooter,
+  Row,
+  Col
 } from "reactstrap";
+
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
+
+const data = [
+
+];
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 const PATH_PRODUCTOS = "productos";
-class Productos extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      data: [],
-      modalActualizar: false,
-      modalInsertar: false,
-      form: {
-        _id: "",
-        nombre: "",
-        descripcion: "",
-        valor_unitario: "",
-        disponible: "",
-      },
-    };
-  }
+const Productos = () => {
 
-  componentDidMount() {
-    this.cargarProductos();
-  }
+  const auth = getAuth();
+  const [modalActualizar, setModalActualizar] = React.useState(false);
+  const [modalInsertar, setModalInsertar] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [errors, setErrors] = React.useState(null);
+  const [newVal, setNewVal] = React.useState(0);
+  const [product, loading, error] = useAuthState(auth);
+  const history = useHistory();
 
-  mostrarModalActualizar = (dato) => {
-    this.setState({ modalActualizar: true, form: dato });
-  };
-
-  cerrarModalActualizar = () => {
-    this.setState({ modalActualizar: false });
-  };
-
-  mostrarModalInsertar = () => {
-    this.setState({
-      modalInsertar: true,
-      form: {
-        nombre: "",
-        descripcion: "",
-        valor_unitario: "",
-        disponible: "",
-      },
+  const logout = () => {
+    auth.signOut().then(function () {
+      // Sign-out successful.
+      console.log("loggedout");
+    }).catch((error) => {
+      // An error happened.
+      const errorCode = error.code;
+      const errorMessage = error.message;
     });
   };
 
-  cerrarModalInsertar = () => {
-    this.setState({ modalInsertar: false });
-  };
-
-  editar = (dato) => {
-    this.actualizarProducto(dato);
-    this.setState({ modalActualizar: false });
-  };
-
-  eliminar = (dato) => {
-    let option = window.confirm(
-      "¿Esta seguro de eliminar este producto ... " + dato.nombre + "?"
-    );
-
-    if (option) {
-      this.borrarProducto(dato._id);
+  const [producto, setProducto] = React.useState({
+    data: data,
+    form: {
+      nombre: "",
+      descripcion: "",
+      valor_unitario: "",
+      disponible: "",
     }
-  };
+  });
 
-  insertar = () => {
-    let newProducto = { ...this.state.form };
+  React.useEffect(() => {
+    if (loading) return;
+    if (!product) return history.replace("/");
+  }, [producto, loading]);
 
-    this.crearProducto(newProducto);
+  React.useEffect(() => {
+    if (!product) return history.replace("/");
+    product.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_PRODUCTOS}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setIsLoaded(true);
+            setProducto({
+              ...producto,
+              data: result
+            });
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          }
+        )
+    });
+  }, [newVal]);
 
-    this.setState({ modalInsertar: false });
-  };
-
-  handleChange = (e) => {
-    this.setState({
+  const handleChange = (e) => {
+    setProducto((prevState) => ({
+      ...prevState,
       form: {
-        ...this.state.form,
+        ...prevState.form,
         [e.target.name]: e.target.value,
-      },
+      }
+    }));
+  };
+
+  const mostrarModalActualizar = (e) => {
+    let arregloProductos = producto.data;
+    let productToModify;
+    arregloProductos.map((registro) => {
+      if (e.target.id === registro._id) {
+        productToModify = registro;
+      }
+    });
+    setProducto({
+      ...producto,
+      form: productToModify
+    });
+    setModalActualizar(true);
+  };
+
+  const cerrarModalActualizar = () => {
+    setModalActualizar(false);
+  };
+
+  const mostrarModalInsertar = () => {
+    setModalInsertar(true);
+  };
+
+  const cerrarModalInsertar = () => {
+    setModalInsertar(false);
+  };
+
+  const editar = () => {
+    let productoAModificar = { ...producto.form };
+    actualizarProducto(productoAModificar);
+    setModalActualizar(false);
+  };
+
+  const eliminar = (e) => {
+    let arregloProducto = producto.data;
+    arregloProducto.map((registro) => {
+      if (e.target.id === registro._id) {
+        let opcion = window.confirm("¿Está seguro que desea eliminar el valor " + registro.nombre + "?");
+        if (opcion) {
+          borrarProducto(registro._id);
+        }
+      }
     });
   };
 
-  render() {
+  const insertar = () => {
+    let productoACrear = { ...producto.form };
+    crearProducto(productoACrear);
+    setModalInsertar(false);
+  }
+
+  const crearProducto = (productoACrear) => {
+    product.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(productoACrear)
+      };
+      fetch(`${BASE_URL}${PATH_PRODUCTOS}`, requestOptions)
+        .then(
+          (response) => {
+            response.json();
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          })
+    });
+  }
+
+  const borrarProducto = (id) => {
+    product.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_PRODUCTOS}/${id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+
+  const actualizarProducto = (producto) => {
+    product.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(producto)
+      };
+      fetch(`${BASE_URL}${PATH_PRODUCTOS}/${producto._id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+  if (error) {
+    return <Alert color="danger">
+      Error: {error.message}
+    </Alert>;
+  } else {
     return (
+
       <Container>
         <br />
         <Row className="section-title">
@@ -105,35 +234,24 @@ class Productos extends React.Component {
           </Col>
           <Col md="4" className="d-flex justify-content-end">
             <div class="align-self-end">
-              <Button
-                color="primary w-100"
-                onClick={() => this.mostrarModalInsertar()}
-              >
-                Crear
-              </Button>
+              <Button color="primary w-40" onClick={mostrarModalInsertar}>Crear</Button>
+              <Button outline color="secondary" onClick={logout} block>Cerrar sesión</Button>
             </div>
           </Col>
         </Row>
-
-        <br />
-        <br />
         <div className="table-container">
           <Table>
-            {this.state.mostrarCargando ? (
-              <Spinner size="xl" type="grow" color="primary" />
-            ) : null}
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Valor por unidad</th>
+                <th>Descripcion</th>
+                <th>Valor unitario</th>
                 <th>Disponible</th>
-                <th>Acciones</th>
               </tr>
             </thead>
 
             <tbody>
-              {this.state.data.map((dato) => (
+              {producto.data.map((dato) => (
                 <tr key={dato._id}>
                   <td>{dato.nombre}</td>
                   <td>{dato.descripcion}</td>
@@ -141,12 +259,12 @@ class Productos extends React.Component {
                   <td>{dato.disponible}</td>
                   <td>
                     <Button
-                      color="primary"
-                      onClick={() => this.mostrarModalActualizar(dato)}
+                      color="primary" id={dato._id}
+                      onClick={mostrarModalActualizar} 
                     >
                       Editar
                     </Button>{" "}
-                    <Button color="danger" onClick={() => this.eliminar(dato)}>
+                    <Button color="danger" id={dato._id} onClick={eliminar}>
                       Eliminar
                     </Button>
                   </td>
@@ -156,10 +274,10 @@ class Productos extends React.Component {
           </Table>
         </div>
 
-        <Modal isOpen={this.state.modalActualizar}>
+        <Modal isOpen={modalActualizar}>
           <ModalHeader>
             <div>
-              <h3>Actualizar Producto</h3>
+              <h3>Actualizar Producto {producto.form._id}</h3>
             </div>
           </ModalHeader>
 
@@ -171,7 +289,7 @@ class Productos extends React.Component {
                 className="form-control"
                 readOnly
                 type="text"
-                value={this.state.form._id}
+                value={producto.form._id}
               />
             </FormGroup>
 
@@ -181,9 +299,9 @@ class Productos extends React.Component {
                 className="form-control"
                 name="nombre"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
-                value={this.state.form.nombre}
+                value={producto.form.nombre}
               />
             </FormGroup>
 
@@ -193,19 +311,19 @@ class Productos extends React.Component {
                 className="form-control"
                 name="descripcion"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.descripcion}
+                onChange={handleChange}
+                value={producto.form.descripcion}
               />
             </FormGroup>
 
             <FormGroup>
-              <label>Valor por unidad:</label>
+              <label>Valor unitario:</label>
               <input
                 className="form-control"
                 name="valor_unitario"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.valor_unitario}
+                onChange={handleChange}
+                value={producto.form.valor_unitario}
               />
             </FormGroup>
 
@@ -215,8 +333,8 @@ class Productos extends React.Component {
                 className="form-control"
                 name="disponible"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.disponible}
+                onChange={handleChange}
+                value={producto.form.disponible}
               />
             </FormGroup>
           </ModalBody>
@@ -224,20 +342,20 @@ class Productos extends React.Component {
           <ModalFooter>
             <Button
               color="primary"
-              onClick={() => this.editar(this.state.form)}
+              onClick={editar}
             >
               Actualizar
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalActualizar()}
+              onClick={cerrarModalActualizar}
             >
               Cancelar
             </Button>
           </ModalFooter>
         </Modal>
 
-        <Modal isOpen={this.state.modalInsertar}>
+        <Modal isOpen={modalInsertar}>
           <ModalHeader>
             <div>
               <h3>Crear Producto</h3>
@@ -251,7 +369,7 @@ class Productos extends React.Component {
                 className="form-control"
                 name="nombre"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
               />
             </FormGroup>
@@ -262,17 +380,17 @@ class Productos extends React.Component {
                 className="form-control"
                 name="descripcion"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
             <FormGroup>
-              <label>Valor por unidad:</label>
+              <label>Valor unitario:</label>
               <input
                 className="form-control"
                 name="valor_unitario"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -282,18 +400,18 @@ class Productos extends React.Component {
                 className="form-control"
                 name="disponible"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
           </ModalBody>
 
           <ModalFooter>
-            <Button color="primary" onClick={() => this.insertar()}>
+            <Button color="primary" onClick={insertar}>
               Crear
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalInsertar()}
+              onClick={cerrarModalInsertar}
             >
               Cancelar
             </Button>
@@ -301,79 +419,6 @@ class Productos extends React.Component {
         </Modal>
       </Container>
     );
-  }
-
-  crearProducto(producto) {
-    // Simple POST request with a JSON body using fetch
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(producto),
-    };
-
-    fetch(`${BASE_URL}${PATH_PRODUCTOS}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarProductos();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  cargarProductos() {
-    fetch(`${BASE_URL}${PATH_PRODUCTOS}`)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.setState({
-            data: result,
-          });
-        },
-        // Nota: es importante manejar errores aquí y no en
-        // un bloque catch() para que no interceptemos errores
-        // de errores reales en los componentes.
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  borrarProducto(id) {
-    const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(`${BASE_URL}${PATH_PRODUCTOS}/${id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarProductos();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  actualizarProducto(producto) {
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(producto),
-    };
-    fetch(`${BASE_URL}${PATH_PRODUCTOS}/${producto._id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarProductos();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
   }
 }
 
