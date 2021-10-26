@@ -1,131 +1,247 @@
 import React from "react";
-import styles from "./Ventas.module.css";
+// import styles from "./Ventas.module.css";
 import {
-  Button,
-  Col,
-  Container,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-  Spinner,
+  Alert,
   Table,
+  Button,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  FormGroup,
+  ModalFooter,
+  Row,
+  Col
 } from "reactstrap";
+
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useHistory } from "react-router";
+import { getAuth } from "firebase/auth";
+
+const data = [
+
+];
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 const PATH_VENTAS = "ventas";
-class Ventas extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      data: [],
-      modalActualizar: false,
-      modalInsertar: false,
-      form: {
-        _id: "",
-        valor_total: "",
-        fecha_venta: "",
-        documento_cliente: "",
-        cliente: "",
-        vendedor: "",
-        estado: ""
-      },
-    };
-  }
+const Ventas = () => {
 
-  componentDidMount() {
-    this.cargarVentas();
-  }
+  const auth = getAuth();
+  const [modalActualizar, setModalActualizar] = React.useState(false);
+  const [modalInsertar, setModalInsertar] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [errors, setErrors] = React.useState(null);
+  const [newVal, setNewVal] = React.useState(0);
+  const [sell, loading, error] = useAuthState(auth);
+  const history = useHistory();
 
-  mostrarModalActualizar = (dato) => {
-    this.setState({ modalActualizar: true, form: dato });
-  };
-
-  cerrarModalActualizar = () => {
-    this.setState({ modalActualizar: false });
-  };
-
-  mostrarModalInsertar = () => {
-    this.setState({
-      modalInsertar: true,
-      form: {
-        valor_total: "",
-        fecha_venta: "",
-        documento_cliente: "",
-        cliente: "",
-        vendedor: "",
-        estado: "",
-      },
+  const logout = () => {
+    auth.signOut().then(function () {
+      // Sign-out successful.
+      console.log("loggedout");
+    }).catch((error) => {
+      // An error happened.
+      const errorCode = error.code;
+      const errorMessage = error.message;
     });
   };
 
-  cerrarModalInsertar = () => {
-    this.setState({ modalInsertar: false });
-  };
-
-  editar = (dato) => {
-    this.actualizarVenta(dato);
-    this.setState({ modalActualizar: false });
-  };
-
-  eliminar = (dato) => {
-    let option = window.confirm(
-      "¿Esta seguro de eliminar la venta: " + dato._id + "?"
-    );
-
-    if (option) {
-      this.borrarVenta(dato._id);
+  const [venta, setVenta] = React.useState({
+    data: data,
+    form: {
+      valor_total: "",
+      fecha_venta: "",
+      documento_cliente: "",
+      cliente: "",
+      vendedor: "",
+      estado: "",
     }
-  };
+  });
 
-  insertar = () => {
-    let newVenta = { ...this.state.form };
+  React.useEffect(() => {
+    if (loading) return;
+    if (!sell) return history.replace("/");
+  }, [venta, loading]);
 
-    this.crearVenta(newVenta);
+  React.useEffect(() => {
+    if (!sell) return history.replace("/");
+    sell.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_VENTAS}`, requestOptions)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            setIsLoaded(true);
+            setVenta({
+              ...venta,
+              data: result
+            });
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          }
+        )
+    });
+  }, [newVal]);
 
-    this.setState({ modalInsertar: false });
-  };
-
-  handleChange = (e) => {
-    this.setState({
+  const handleChange = (e) => {
+    setVenta((prevState) => ({
+      ...prevState,
       form: {
-        ...this.state.form,
+        ...prevState.form,
         [e.target.name]: e.target.value,
-      },
+      }
+    }));
+  };
+
+  const mostrarModalActualizar = (e) => {
+    let arregloVentas = venta.data;
+    let sellToModify;
+    arregloVentas.map((registro) => {
+      if (e.target.id === registro._id) {
+        sellToModify = registro;
+      }
+    });
+    setVenta({
+      ...venta,
+      form: sellToModify
+    });
+    setModalActualizar(true);
+  };
+
+  const cerrarModalActualizar = () => {
+    setModalActualizar(false);
+  };
+
+  const mostrarModalInsertar = () => {
+    setModalInsertar(true);
+  };
+
+  const cerrarModalInsertar = () => {
+    setModalInsertar(false);
+  };
+
+  const editar = () => {
+    let ventaAModificar = { ...venta.form };
+    actualizarVenta(ventaAModificar);
+    setModalActualizar(false);
+  };
+
+  const eliminar = (e) => {
+    let arregloVenta = venta.data;
+    arregloVenta.map((registro) => {
+      if (e.target.id === registro._id) {
+        let opcion = window.confirm("¿Está seguro que desea eliminar la venta con valor de" + registro.valor_total + "?");
+        if (opcion) {
+          borrarVenta(registro._id);
+        }
+      }
     });
   };
 
-  render() {
+  const insertar = () => {
+    let ventaACrear = { ...venta.form };
+    crearVenta(ventaACrear);
+    setModalInsertar(false);
+  }
+
+  const crearVenta = (ventaACrear) => {
+    sell.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(ventaACrear)
+      };
+      fetch(`${BASE_URL}${PATH_VENTAS}`, requestOptions)
+        .then(
+          (response) => {
+            response.json();
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            setIsLoaded(true);
+            setErrors(error);
+          })
+    });
+  }
+
+  const borrarVenta = (id) => {
+    sell.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(`${BASE_URL}${PATH_VENTAS}/${id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+
+  const actualizarVenta = (venta) => {
+    sell.getIdToken(true).then(token => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(venta)
+      };
+      fetch(`${BASE_URL}${PATH_VENTAS}/${venta._id}`, requestOptions)
+        .then(result => result.json())
+        .then(
+          (result) => {
+            setNewVal(newVal + 1);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    });
+  }
+  if (error) {
+    return <Alert color="danger">
+      Error: {error.message}
+    </Alert>;
+  } else {
     return (
       <Container>
         <br />
         <Row className="section-title">
           <Col md="8">
             <h2>Modulo Ventas</h2>
-            <p>En este módulo podras administrar las venta.</p>
+            <p>En este módulo podras administrar las ventas.</p>
           </Col>
           <Col md="4" className="d-flex justify-content-end">
             <div className="align-self-end">
-              <Button
-                color="primary w-100"
-                onClick={() => this.mostrarModalInsertar()}
-              >
-                Crear
-              </Button>
+              <Button color="primary w-40" onClick={mostrarModalInsertar}>Crear</Button>
+              <Button outline color="secondary" onClick={logout} block>Cerrar sesión</Button>
             </div>
           </Col>
         </Row>
-
-        <br />
-        <br />
         <div className="table-container">
           <Table>
-            {this.state.mostrarCargando ? (
-              <Spinner size="xl" type="grow" color="primary" />
-            ) : null}
             <thead>
               <tr>
                 <th>Valor Total</th>
@@ -134,12 +250,11 @@ class Ventas extends React.Component {
                 <th>Nombre Cliente</th>
                 <th>Vendedor</th>
                 <th>Estado</th>
-                <th>Acciones</th>
               </tr>
             </thead>
 
             <tbody>
-              {this.state.data.map((dato) => (
+              {venta.data.map((dato) => (
                 <tr key={dato._id}>
                   <td>{dato.valor_total}</td>
                   <td>{dato.fecha_venta}</td>
@@ -149,12 +264,12 @@ class Ventas extends React.Component {
                   <td>{dato.estado}</td>
                   <td>
                     <Button
-                      color="primary"
-                      onClick={() => this.mostrarModalActualizar(dato)}
+                      color="primary" id={dato._id}
+                      onClick={mostrarModalActualizar}
                     >
                       Editar
                     </Button>{" "}
-                    <Button color="danger" onClick={() => this.eliminar(dato)}>
+                    <Button color="danger" id={dato._id} onClick={eliminar}>
                       Eliminar
                     </Button>
                   </td>
@@ -164,10 +279,10 @@ class Ventas extends React.Component {
           </Table>
         </div>
 
-        <Modal isOpen={this.state.modalActualizar}>
+        <Modal isOpen={modalActualizar}>
           <ModalHeader>
             <div>
-              <h3>Actualizar Venta</h3>
+              <h3>Actualizar Venta {venta.form._id}</h3>
             </div>
           </ModalHeader>
 
@@ -179,7 +294,7 @@ class Ventas extends React.Component {
                 className="form-control"
                 readOnly
                 type="text"
-                value={this.state.form._id}
+                value={venta.form._id}
               />
             </FormGroup>
 
@@ -189,9 +304,9 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="valor_total"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
-                value={this.state.form.valor_total}
+                value={venta.form.valor_total}
               />
             </FormGroup>
 
@@ -201,8 +316,8 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="fecha_venta"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.fecha_venta}
+                onChange={handleChange}
+                value={venta.form.fecha_venta}
               />
             </FormGroup>
 
@@ -212,8 +327,8 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="documento_cliente"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.documento_cliente}
+                onChange={handleChange}
+                value={venta.form.documento_cliente}
               />
             </FormGroup>
 
@@ -223,8 +338,8 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="cliente"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.cliente}
+                onChange={handleChange}
+                value={venta.form.cliente}
               />
             </FormGroup>
             <FormGroup>
@@ -233,8 +348,8 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="vendedor"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.vendedor}
+                onChange={handleChange}
+                value={venta.form.vendedor}
               />
             </FormGroup>
             <FormGroup>
@@ -243,8 +358,8 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="estado"
                 type="text"
-                onChange={this.handleChange}
-                value={this.state.form.estado}
+                onChange={handleChange}
+                value={venta.form.estado}
               />
             </FormGroup>
           </ModalBody>
@@ -252,20 +367,20 @@ class Ventas extends React.Component {
           <ModalFooter>
             <Button
               color="primary"
-              onClick={() => this.editar(this.state.form)}
+              onClick={editar}
             >
               Actualizar
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalActualizar()}
+              onClick={cerrarModalActualizar}
             >
               Cancelar
             </Button>
           </ModalFooter>
         </Modal>
 
-        <Modal isOpen={this.state.modalInsertar}>
+        <Modal isOpen={modalInsertar}>
           <ModalHeader>
             <div>
               <h3>Crear Venta</h3>
@@ -279,7 +394,7 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="valor_total"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
                 required
               />
             </FormGroup>
@@ -289,8 +404,8 @@ class Ventas extends React.Component {
               <input
                 className="form-control"
                 name="fecha_venta"
-                type="text"
-                onChange={this.handleChange}
+                type="date"
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -300,7 +415,7 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="documento_cliente"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -310,7 +425,7 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="cliente"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
 
@@ -320,7 +435,7 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="vendedor"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
             <FormGroup>
@@ -329,18 +444,18 @@ class Ventas extends React.Component {
                 className="form-control"
                 name="estado"
                 type="text"
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
           </ModalBody>
 
           <ModalFooter>
-            <Button color="primary" onClick={() => this.insertar()}>
-            Crear
+            <Button color="primary" onClick={insertar}>
+              Crear
             </Button>
             <Button
               className="btn btn-danger"
-              onClick={() => this.cerrarModalInsertar()}
+              onClick={cerrarModalInsertar}
             >
               Cancelar
             </Button>
@@ -348,79 +463,6 @@ class Ventas extends React.Component {
         </Modal>
       </Container>
     );
-  }
-
-  crearVenta(venta) {
-    // Simple POST request with a JSON body using fetch
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(venta),
-    };
-
-    fetch(`${BASE_URL}${PATH_VENTAS}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarVentas();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  cargarVentas() {
-    fetch(`${BASE_URL}${PATH_VENTAS}`)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.setState({
-            data: result,
-          });
-        },
-        // Nota: es importante manejar errores aquí y no en
-        // un bloque catch() para que no interceptemos errores
-        // de errores reales en los componentes.
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  borrarVenta(id) {
-    const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(`${BASE_URL}${PATH_VENTAS}/${id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarVentas();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  actualizarVenta(venta) {
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(venta),
-    };
-    fetch(`${BASE_URL}${PATH_VENTAS}/${venta._id}`, requestOptions)
-      .then((result) => result.json())
-      .then(
-        (result) => {
-          this.cargarVentas();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
   }
 }
 
