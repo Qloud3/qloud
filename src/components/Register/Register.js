@@ -81,7 +81,7 @@ function Register() {
         />
       </FormGroup>
 
-      <ButtonGroup>
+      <ButtonGroup className="mt-4">
         <Button
           color="primary"
           onClick={register}
@@ -99,7 +99,7 @@ function Register() {
 
       <br />
 
-      <ListGroup>
+      <ListGroup className="mt-4">
         <ListGroupItem tag="a" href="/login">Autenticate si ya tienes una cuenta</ListGroupItem>
       </ListGroup>
 

@@ -5,7 +5,7 @@ import {
   FormGroup,
   ButtonGroup,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
 } from "reactstrap";
 import {
   auth,
@@ -15,12 +15,11 @@ import {
 import { useHistory } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, loading, error] = useAuthState(auth);
-  const [errors, seterrors] = useState('');
+  const [errors, seterrors] = useState("");
   const history = useHistory();
 
   useEffect(() => {
@@ -28,15 +27,15 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
-    if (user) { history.replace("/users"); }
+    if (user) {
+      history.replace("/users");
+    }
   }, [user, loading]);
 
   return (
     <Container>
       <FormGroup>
-        <label>
-          Email:
-        </label>
+        <label>Email:</label>
         <input
           className="form-control"
           name="email"
@@ -48,12 +47,11 @@ function Login() {
         />
       </FormGroup>
       <FormGroup>
-        <label>
-          Clave:
-        </label>
+        <label>Contraseña:</label>
         <input
           className="form-control"
           name="password"
+          placeholder="Contraseña"
           type="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
@@ -61,7 +59,7 @@ function Login() {
         />
       </FormGroup>
 
-      <ButtonGroup>
+      <ButtonGroup className="mt-4">
         <Button
           color="primary"
           type="submit"
@@ -70,22 +68,21 @@ function Login() {
           Accede
         </Button>
 
-        <Button
-          color="danger"
-          onClick={signInWithGoogle}
-        >
+        <Button color="danger" onClick={signInWithGoogle}>
           Accede con Google
         </Button>
       </ButtonGroup>
 
-
       <br />
 
-      <ListGroup>
-        <ListGroupItem tag="a" href="/reset">Olvide mi clave</ListGroupItem>
-        <ListGroupItem tag="a" href="/register">Crea tu cuenta</ListGroupItem>
+      <ListGroup className="mt-4">
+        <ListGroupItem tag="a" href="/reset">
+          Olvide mi clave
+        </ListGroupItem>
+        <ListGroupItem tag="a" href="/register">
+          Crea tu cuenta
+        </ListGroupItem>
       </ListGroup>
-
     </Container>
   );
 }
